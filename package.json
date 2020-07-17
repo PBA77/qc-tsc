@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "tsc --outDir out qc.tsx",
+    "run": "node out/qc.js",
+    "compilerun": "tsc --outDir out qc.tsx && node out/qc.js"
   },
   "keywords": [],
   "author": "",
