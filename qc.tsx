@@ -1,27 +1,26 @@
 import * as readlineSync from "readline-sync";
 
-type Tr = { x: number; y: number; r: number };
+type Trans = { x: number; y: number; r: number };
 
-const inputData = (): Tr[] => {
-  const transm = [];
+const inputData = (): Trans[] => {
   readlineSync.setDefaultOptions({ prompt: "" });
-  const count = parseInt(readlineSync.prompt(), 10);
-  for (let i = 0; i < count + 2; i++) {
-    const [xVal, yVal, rVal = 0] = readlineSync
+  const transmittersNumber = parseInt(readlineSync.prompt(), 10);
+  return Array.from({ length: transmittersNumber + 2 }, () =>
+    readlineSync
       .prompt()
       .split(" ")
-      .map((item) => parseInt(item, 10));
-
-    transm.push({ x: xVal, y: yVal, r: rVal });
-  }
-  return transm;
+      .map((item) => parseInt(item, 10))
+  ).map((item) => {
+    return { x: item[0], y: item[1], r: item[2] || 0 };
+  });
 };
 
-const isPassageSafe = (points: Tr[]) => {
+const isPassageSafe = (points: Trans[]) => {
   const N = points.length;
-  const visited = Array(N).fill(false);
-  visited[N - 2] = true;
-  const queue: number[] = [N - 2];
+  const START_POINT = N - 2;
+  const END_POINT = N - 1;
+  const visited = Array.from({ length: N }, (_, i) => i === START_POINT);
+  const queue = [START_POINT];
 
   while (true) {
     const x = queue.pop();
@@ -32,24 +31,20 @@ const isPassageSafe = (points: Tr[]) => {
         !visited[node] &&
         transmsConnected(points[x], points[node])
       ) {
-        if (node === N - 1) {
-          return true;
-        }
+        if (node === END_POINT) return true;
         queue.push(node);
         visited[node] = true;
       }
     }
   }
-  return false;
 };
 
-const transmsConnected = (t1: Tr, t2: Tr) =>
+const transmsConnected = (t1: Trans, t2: Trans) =>
   (t1.x - t2.x) ** 2 + (t1.y - t2.y) ** 2 <= (t1.r + t2.r) ** 2;
 
 const transmitters = inputData();
 
-if (isPassageSafe(transmitters)) {
-  console.log("Safe passage is possible.");
-} else {
-  console.log("Safe passage is not possible.");
-}
+console.log(transmitters);
+
+if (isPassageSafe(transmitters)) console.log("Safe passage is possible.");
+else console.log("Safe passage is not possible.");
